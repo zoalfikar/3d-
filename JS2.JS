@@ -1,136 +1,88 @@
  //limit
  var H = 600,
      W = 600;
- var m_min_x = -3,
-     m_max_x = 3;
- var m_min_y = -3,
-     m_max_y = 3;
+ var m_min_x = -1,
+     m_max_x = 1;
+ var m_min_y = -1,
+     m_max_y = 1;
  var step = 0.1;
  var C = document.getElementById('canvas') // as HTMLCanvasElement;
  var ctx = C.getContext('2d');
 
  var points = [];
+ var traingles = [];
+ var colors = [
+     'red', 'green', 'blue', 'white',
+     'orange', 'purple', 'cyan', 'yellow'
+ ];
 
- //  function initGeometry() {
+ function makeTraingle(a, b, c, dimention, side) {
+     var side1 = b.subtract(a),
+         side2 = c.subtract(a);
+     var orientationVec = side1.cross(side2);
+     if (Math.sign(orientationVec[dimention]) == Math.sign(side)) {
 
- //      for (let x = m_min_x; x <= m_max_x; x += step) {
- //          for (let y = m_min_y; y <= m_max_y; y += step) {
- //              for (let z = -2; z <= 2; z += step) {
- //                  points.push([x, y, z]);
- //              }
- //          }
- //      }
- //  }
+         return [a, b, c];
+     }
+     return [a, c, b];
 
+ }
 
  function initGeometry() {
-     var d = 2;
-     var drad = 0.1;
-     for (let radis = 0; radis <= 2 * Math.PI; radis += drad) {
-         var yp = d * Math.sin(radis)
-         var newD = d * Math.cos(radis);
-         for (let radis2 = 0; radis2 <= 2 * Math.PI; radis2 += drad) {
-             var xp = newD * Math.cos(radis2)
-             var zp = newD * Math.sin(radis2)
-             points.push([xp, yp, zp]);
+     for (let x = -1; x <= 1; x += 2) {
+         for (let y = -1; y <= 1; y += 2) {
+             for (let z = -1; z <= 1; z += 2) {
+                 points.push(new Vector(x, y, z));
+             }
+         }
+     }
+     for (let dimention = 0; dimention <= 2; dimention++) {
+         for (let side = -1; side <= 1; side += 2) {
+             var sidePoints = points.filter((point) => {
+                 return point[dimention] == side;
+             });
+             var a = sidePoints[0],
+                 b = sidePoints[1],
+                 c = sidePoints[2],
+                 d = sidePoints[3];
+             if (dimention == 1) {
+                 traingles.push(makeTraingle(a, b, c, dimention, side));
+                 traingles.push(makeTraingle(d, b, c, dimention, side));
+             } else {
+                 traingles.push(makeTraingle(a, b, c, dimention, -side));
+                 traingles.push(makeTraingle(d, b, c, dimention, -side));
+             }
+
          }
      }
  }
- //  function initGeometry() {
- //     var radis = 0;
- //     //  var radis2 = 0;
- //     var d = 2;
- //     var drad = 0.1;
- //     var drad2 = 0.4;
- //     for (radis; radis <= 2 * Math.PI; radis += drad) {
- //         var xp = d * Math.cos(radis)
- //         var yp = d * Math.sin(radis)
 
- //         for (let radis2 = 0; radis2 <= 2 * Math.PI; radis2 += drad2) {
- //             var zp = d * Math.sin(radis2)
- //             points.push([xp, yp, zp]);
- //         }
- //         //  points.push([xp, yp, 0]);
- //         //  points.push([xp / 2, yp / 2, 1]);
- //         //  points.push([xp / 4, yp / 4, 2]);
- //         //  points.push([xp / 9, yp / 9, 3]);
- //         //  points.push([0, 0, 4]);
- //     }
- // }
- //  function initGeometry() {
- //      var radis = 0;
- //      var radis2 = 0;
- //      var d = 2;
- //      var drad = 0.1;
- //      var drad2 = 0.5;
- //      //  for (radis; radis <= 2 * Math.PI; radis += drad) {
- //      //      var xp = d * Math.cos(radis)
- //      //      var yp = d * Math.sin(radis)
- //      for (radis; radis <= 2 * Math.PI; radis += drad) {
- //          var xp = d * Math.cos(radis)
 
- //          var zp = d * Math.sin(radis)
- //          console.log(radis);
- //          points.push([xp, 1, zp]);
- //          //  console.log([xp, yp, 0]);
- //      }
- //      //  }
- //  }
+
+
+
 
  function project(point) {
      var perspectivPe = persP(point);
      var x = perspectivPe[0]
      var y = perspectivPe[1]
+     var z = perspectivPe[2]
 
-     return [
+     return new Vector(
          W * (x - m_min_x) / (m_max_x - m_min_x),
-         H * (1 - (y - m_min_y) / (m_max_y - m_min_y)),
-     ];
+         H * (1 - (y - m_min_y) / (m_max_y - m_min_y)), z
+     );
  }
 
  function persP(point) {
      var x = point[0]
      var y = point[1]
      var z = point[2]
-     return [x / (z + 5), y / (z + 5)]
+     return new Vector(x / (z + 5), y / (z + 5), z)
  }
 
- function rotatY(theta, ponit) {
-     var x = ponit[0]
-     var y = ponit[1]
-     var z = ponit[2]
-     return [
-         Math.cos(theta) * x + Math.sin(theta) * z,
-         y,
-         Math.sin(theta) * x - Math.cos(theta) * z
-     ];
- }
 
- function rotatX(theta, ponit) {
-     var x = ponit[0]
-     var y = ponit[1]
-     var z = ponit[2]
-     return [
-         x,
-         Math.cos(theta) * y - Math.sin(theta) * z,
-         Math.sin(theta) * y + Math.cos(theta) * z
-     ];
- }
- //  return [
- //     (Math.sqrt(x * x + y * y)) * Math.cos(theta) * x / Math.sqrt(x * x + y * y) - Math.sin(theta) * y / Math.sqrt(x * x + y * y), //- Math.sin(theta) * z, cosxcosy−sinxsiny
- //     (Math.sqrt(x * x + y * y)) * Math.sin(theta), //+ Math.cos(theta) * z,
- //     z
- // ]; beautifull shape
- function rotatZ(theta, ponit) {
-     var x = ponit[0]
-     var y = ponit[1]
-     var z = ponit[2]
-     return [
-         (Math.sqrt(x * x + y * y)) * (Math.cos(theta) * x / Math.sqrt(x * x + y * y) - Math.sin(theta) * y / Math.sqrt(x * x + y * y)), //- Math.sin(theta) * z, cosxcosy−sinxsiny
-         (Math.sqrt(x * x + y * y)) * (y / Math.sqrt(x * x + y * y) * Math.cos(theta) + x / Math.sqrt(x * x + y * y) * Math.sin(theta)), //+ Math.cos(theta) * z,
-         z
-     ];
- }
+
 
  //  function drawPoint(point) {
 
@@ -144,34 +96,42 @@
  //      ctx.strokeStyle = 'white';
  //      ctx.stroke();
  //  }
- function drawPoint(point) {
 
-     var proP = project(point)
-     var x = proP[0];
-     var y = proP[1];
-     ctx.beginPath()
-     ctx.moveTo(x + 1, y + 1);
-     ctx.lineTo(x, y);
-     ctx.lineWidth = 4;
-     if (point[3] == 1) {
-         ctx.strokeStyle = 'blue';
+ function drawTraingle(traingle, color) {
 
-     } else {
+     var proT = traingle.map(project)
+     var a = proT[0];
+     var b = proT[1];
+     var c = proT[2];
+     var side1 = b.subtract(a)
+     var side2 = c.subtract(a)
+     if (side1.ccw(side2) == false) {
+         ctx.beginPath()
+         ctx.moveTo(a[0], a[1]);
+         ctx.lineTo(b[0], b[1]);
+         ctx.lineTo(c[0], c[1]);
+         ctx.lineTo(a[0], a[1]);
          ctx.strokeStyle = 'white';
-
+         ctx.fillStyle = color;
+         ctx.stroke();
+         ctx.fill();
      }
-     ctx.stroke();
  }
  var theta = 0;
  var dtheta = 0.01;
 
  function draw() {
      ctx.clearRect(0, 0, H, W);
-     points.forEach((point) => {
-         //  point = rotatX(theta, point)
-         point = rotatY(theta, point)
-             //  point = rotatZ(0.2 * theta, point)
-         drawPoint(point)
+     traingles.forEach((traingle, idx) => {
+         traingle = traingle.map((point) => {
+
+             point = point.rotatX(theta)
+             point = point.rotatY(0.2 * theta)
+                 //  point =point.rotatZ(0.2 * theta)
+             return point;
+         })
+         var color = colors[Math.floor(idx / 2)];
+         drawTraingle(traingle, color)
      })
      theta += dtheta
      requestAnimationFrame(draw)
