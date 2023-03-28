@@ -1,11 +1,11 @@
  //limit
  var H = 600,
      W = 600;
- var m_min_x = -1,
-     m_max_x = 1;
- var m_min_y = -1,
-     m_max_y = 1;
- var step = 0.1;
+ var m_min_x = -3,
+     m_max_x = 3;
+ var m_min_y = -3,
+     m_max_y = 3;
+ var step = 0.01;
  var C = document.getElementById('canvas') // as HTMLCanvasElement;
  var ctx = C.getContext('2d');
 
@@ -25,7 +25,7 @@
 
  function initGeometry() {
      var d = 2;
-     var drad = 0.1;
+     var drad = 0.05;
      for (let radis = 0; radis <= 2 * Math.PI; radis += drad) {
          var yp = d * Math.sin(radis)
          var newD = d * Math.cos(radis);

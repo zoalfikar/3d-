@@ -12,7 +12,7 @@ class Vector {
         )
     }
     ccw(other) {
-        return this.cross(other)[2] < 0
+        return this.cross(other)[2] >= 0
     }
     add(other) {
         return new Vector(this[0] + other[0], this[1] + other[1],
@@ -35,9 +35,9 @@ class Vector {
         var y = this[1]
         var z = this[2]
         return new Vector(
-            Math.cos(theta) * x + Math.sin(theta) * z,
+            Math.sin(theta) * x - Math.cos(theta) * z,
             y,
-            Math.sin(theta) * x - Math.cos(theta) * z
+            Math.cos(theta) * x + Math.sin(theta) * z
         );
     }
 
@@ -60,4 +60,7 @@ class Vector {
             z
         );
     }
+    equals(other) {
+        return other[0] == this[0] && other[1] == this[1] && other[2] == this[2];
+    };
 }
