@@ -5,19 +5,77 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>js 3d</title>
-    <style>
-        canvas {
-            background-color: black;
-            margin: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div class="options">
+        <button class="shape-button" onclick="dottedshape ='cube'; DottedInitGeometry(dottedshape)">Dotted cube</button>
+        <button class="shape-button" onclick="dottedshape ='globe'; DottedInitGeometry(dottedshape)">Dotted globe</button>
+        <button onclick="rotatex=!rotatex">rotate X</button>
+        <button onclick="rotatey=!rotatey">rotate Y</button>
+        <button onclick="rotatez=!rotatez">rotate Z</button>
+
+    </div>
+    <div class="tools">
+        <label for="rotatexspeed"> x rotaion speed</label> <input type="range" id="rotatexspeed" onchange="rotatexspeed = 0.01* this.value;">
+        <label for="rotateyspeed"> y rotaion speed</label><input type="range" id="rotateyspeed" onchange="rotateyspeed = 0.01* this.value;">
+        <label for="rotatezspeed"> z rotaion speed</label><input type="range" id="rotatezspeed" onchange="rotatezspeed = 0.01* this.value;">
+        <label for="density"> density</label><input value="90" type="range" id="density" onchange=" stepD = 0.01* (100-this.value) * 1.95 + 0.05; DottedInitGeometry(dottedshape);">
+        <div class="camira-y-postion-groub">
+            <label> change y camera perspective</label>
+            <div style="float: right">
+                <button onclick="if (cameray<4) cameray++">+</button>
+                <button onclick="if (cameray>-4) cameray--">-</button>
+            </div>
+
+        </div>
+        <div class="camira-x-postion-groub">
+            <label> change x camera perspective</label>
+            <div style="float: right">
+                <button onclick="if (camerax<4) camerax++">+</button>
+                <button onclick="if (camerax>-4) camerax--">-</button>
+            </div>
+        </div>
+        <div class="camira-deepth-postion-groub">
+            <label> change depth</label>
+            <div style="float: right">
+                <button onclick="if (mainDeepth<10) mainDeepth++">+</button>
+                <button onclick="if (mainDeepth>1) mainDeepth--">-</button>
+            </div>
+
+        </div>
+        <div class="math-drawing-groub" style="display: flex; flex-direction: column;">
+            <label> Draw dotted shape by a mathematical equation</label>
+            <textarea name="" id="" cols="30" rows="10">
+    //example 
+    var a =1;
+    var b=0.5;
+    var c = 0.5;
+    for (let radis = 0; radis <= 2 * Math.PI; radis += stepD) { // keep  step variable (stepD) if you want control Density 
+        var yp = b * Math.sin(radis)
+        var newD = a * Math.cos(radis);
+        var newE = c * Math.cos(radis);
+        for (let radis2 = 0; radis2 <= 2 * Math.PI; radis2 += stepD) {
+            var xp = newD * Math.cos(radis2)
+            var zp = newE * Math.sin(radis2)
+            if (((radis2 >= Math.PI /2 -0.15) && (radis2 <= Math.PI /2 +0.1 ))) {
+                color = "white";
+    
+            } else {
+                color = "red";
+            }
+            points.push([xp, yp, zp, color]);
+        }
+    }
+            </textarea>
+            <Button onclick="createDrawingFunction(); draw()">apply</Button>
+        </div>
+    </div>
     <canvas id="canvas" width="600" height="600"></canvas>
-    <!-- <script src="JS.JS"></script> -->
+    <script src="JS.JS"></script>
     <script src="vector.js"></script>
-    <script src="JS2.JS"></script>
+    <!-- <script src="JS2.JS"></script> -->
 </body>
 
 </html>

@@ -1,10 +1,10 @@
  //limit
  var H = 600,
      W = 600;
- var m_min_x = -2,
-     m_max_x = 2;
- var m_min_y = -2,
-     m_max_y = 2;
+ var m_min_x = -3,
+     m_max_x = 3;
+ var m_min_y = -3,
+     m_max_y = 3;
  var step = 0.1;
  var C = document.getElementById('canvas') //as HTMLCanvasElement;
  C.width = W
@@ -265,16 +265,16 @@
      }
  }
  var theta = 0;
- var dtheta = 0.01;
+ var dtheta = 0.1;
 
  function draw() {
      ctx.clearRect(0, 0, W, H);
      squars.forEach((squar, idx) => {
          squar = squar.map((point) => {
 
-             point = point.rotatX(theta)
+             // //  point = point.rotatX(200 * theta)
              point = point.rotatY(theta)
-                 //  point = point.rotatZ(0.2 * theta)
+             point = point.rotatZ(0.2 * theta)
              return point;
          })
          var color = colors[idx];
