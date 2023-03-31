@@ -12,7 +12,6 @@
          e.target.classList.toggle('button-active')
      })
  })
-
  var H = 600,
      W = 600;
  var m_min_x = -1,
@@ -29,9 +28,21 @@
      rotatezspeed = 50 * 0.01;
  var cameray = 0,
      camerax = 0;
- var mainDeepth = 3;
+ var mainDeepth = 1;
+ var drawPointsMode = false;
+ var drawedZ = 1;
+ var drawedColor = 'red';
  var DottedShapFunction = () => {};
  var C = document.getElementById('canvas') // as HTMLCanvasElement;
+ var canvasOffsetX = C.offsetLeft;
+ var canvasOffsetY = C.offsetTop;
+ C.addEventListener('mousedown', (e) => {
+     if (drawPointsMode) {
+         //  points.push([pushXClient(e), pushYClient(e), drawedZ, drawedColor])
+         points.push([0, 0, 1, drawedColor])
+     }
+     //  console.log(points);
+ })
  var ctx = C.getContext('2d');
 
  var points = [];
@@ -75,13 +86,45 @@
  }
 
  function createDrawingFunction() {
+     if (previousShapeButton) {
+         previousShapeButton.classList.toggle('button-active')
+         previousShapeButton = null;
+     }
      var functionText = document.querySelector('.math-drawing-groub textarea').value;
      DottedShapFunction = eval(`()=> { ${functionText}}`);
      dottedshape = 'dottedshapfunction'
      DottedInitGeometry('dottedshapfunction');
  }
 
+ function drawDots() {
+     drawPointsMode = !drawPointsMode
+ }
 
+ function pushXClient(e) {
+     var x = e.clientX - canvasOffsetX;
+     console.log(W / 2, x);
+     if (x > W / 2) {
+         console.log((W / 2 + x) / (W * 0.5));
+         return (W / 2 + x) / (W * 0.5);
+     }
+     if (x < W / 2) {
+         console.log(-(W / 2 - x) / (W * 0.5));
+
+         return -(W / 2 - x) / (W * 0.5);
+     }
+     return (0);
+
+ }
+
+ function pushYClient(e) {
+     if (e.clientY > canvasOffsetY + H / 2) {
+         return (e.clientY - canvasOffsetY + H / 2) / 1000;
+     }
+     if (e.clientY < canvasOffsetY + W / 2) {
+         return -(e.clientY - canvasOffsetY + H / 2) / 1000;
+     }
+     return (e.clientY - canvasOffsetY + H / 2);
+ }
 
  function DottedInitGeometry(shape) {
      points = [];
@@ -107,8 +150,14 @@
      var perspectivPe = persP(point);
      var x = perspectivPe[0]
      var y = perspectivPe[1]
+         //  if (drawPointsMode) {
+         //      return [
+         //          x,
+         //          y,
+         //      ];
+         //  }
      return [
-         W * (x - m_min_x) / (m_max_x - m_min_x),
+         W * ((x - m_min_x) / (m_max_x - m_min_x)),
          H * (1 - (y - m_min_y) / (m_max_y - m_min_y)),
      ];
  }
@@ -117,7 +166,11 @@
      var x = point[0]
      var y = point[1]
      var z = point[2]
+         //  if (drawPointsMode) {
+         //      return [(x + camerax), (y + cameray)]
+         //  }
      return [(x + camerax) / (z + mainDeepth), (y + cameray) / (z + mainDeepth)]
+
  }
 
  function rotatDottedY(theta, ponit) {
@@ -158,6 +211,7 @@
      var proP = project(point)
      var x = proP[0];
      var y = proP[1];
+     //  console.log(x, y);
      ctx.beginPath()
      ctx.arc(x, y, 1, 0, 2 * Math.PI, true);
      ctx.strokeStyle = color;

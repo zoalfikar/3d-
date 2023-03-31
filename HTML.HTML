@@ -12,6 +12,7 @@
     <div class="options">
         <button class="shape-button" onclick="dottedshape ='cube'; DottedInitGeometry(dottedshape)">Dotted cube</button>
         <button class="shape-button" onclick="dottedshape ='globe'; DottedInitGeometry(dottedshape)">Dotted globe</button>
+        <button class="shape-button" onclick="drawDots()">draw 3d dotted shape</button>
         <button onclick="rotatex=!rotatex">rotate X</button>
         <button onclick="rotatey=!rotatey">rotate Y</button>
         <button onclick="rotatez=!rotatez">rotate Z</button>
@@ -71,6 +72,10 @@
             </textarea>
             <Button onclick="createDrawingFunction(); draw()">apply</Button>
         </div>
+        <button onclick="points = []; if (previousShapeButton) {
+            previousShapeButton.classList.toggle('button-active')
+            previousShapeButton = null;
+        }">clear dots</button>
     </div>
     <canvas id="canvas" width="600" height="600"></canvas>
     <script src="JS.JS"></script>
