@@ -30,7 +30,7 @@
      camerax = 0;
  var mainDeepth = 1;
  var drawPointsMode = false;
- var drawedZ = 1;
+ var drawedZ = 0;
  var drawedColor = 'red';
  var DottedShapFunction = () => {};
  var C = document.getElementById('canvas') // as HTMLCanvasElement;
@@ -38,8 +38,9 @@
  var canvasOffsetY = C.offsetTop;
  C.addEventListener('mousedown', (e) => {
      if (drawPointsMode) {
-         //  points.push([pushXClient(e), pushYClient(e), drawedZ, drawedColor])
-         points.push([0, 0, 1, drawedColor])
+         points.push([pushXClient(e), pushYClient(e), drawedZ, drawedColor])
+             //  console.log(0.99, 0.99, 0);
+             //  points.push([0.99, 0.99, 0, drawedColor])
      }
      //  console.log(points);
  })
@@ -102,28 +103,39 @@
 
  function pushXClient(e) {
      var x = e.clientX - canvasOffsetX;
-     console.log(W / 2, x);
-     if (x > W / 2) {
-         console.log((W / 2 + x) / (W * 0.5));
-         return (W / 2 + x) / (W * 0.5);
-     }
-     if (x < W / 2) {
-         console.log(-(W / 2 - x) / (W * 0.5));
+     console.log(x);
+     console.log((((x / W) * (m_max_x - m_min_x)) + m_min_x));
+     return (((x / W) * (m_max_x - m_min_x)) + m_min_x);
+     //  if (x > W / 2) {
+     //      console.log((W / 2 + x) / (W * 0.5));
+     //      return (W / 2 + x) / (W * 0.5);
+     //  }
+     //  if (x < W / 2) {
+     //      console.log(-(W / 2 - x) / (W * 0.5));
 
-         return -(W / 2 - x) / (W * 0.5);
-     }
-     return (0);
+     //      return -(W / 2 - x) / (W * 0.5);
+     //  }
+     //  return (0);
 
  }
 
  function pushYClient(e) {
-     if (e.clientY > canvasOffsetY + H / 2) {
-         return (e.clientY - canvasOffsetY + H / 2) / 1000;
-     }
-     if (e.clientY < canvasOffsetY + W / 2) {
-         return -(e.clientY - canvasOffsetY + H / 2) / 1000;
-     }
-     return (e.clientY - canvasOffsetY + H / 2);
+     var y = e.clientY - canvasOffsetY;
+
+     return ((m_max_y - m_min_y) - (y / H) * (m_max_y - m_min_y) + m_min_y)
+         // y= H * (1 - (y - m_min_y) / (m_max_y - m_min_y))
+         // (y/H) = 1 - (y - m_min_y) / (m_max_y - m_min_y)
+         // (y/H) - 1 = - (y - m_min_y) / (m_max_y - m_min_y)
+         // (y/H)*(m_max_y - m_min_y) - (m_max_y - m_min_y) = -(y - m_min_y)
+         // (m_max_y - m_min_y) - (y/H)*(m_max_y - m_min_y) = (y - m_min_y)
+         // (m_max_y - m_min_y) - (y/H)*(m_max_y - m_min_y) + m_min_y = y
+         //  if (e.clientY > canvasOffsetY + H / 2) {
+         //      return (e.clientY - canvasOffsetY + H / 2) / 1000;
+         //  }
+         //  if (e.clientY < canvasOffsetY + W / 2) {
+         //      return -(e.clientY - canvasOffsetY + H / 2) / 1000;
+         //  }
+         //  return (e.clientY - canvasOffsetY + H / 2);
  }
 
  function DottedInitGeometry(shape) {
@@ -150,6 +162,7 @@
      var perspectivPe = persP(point);
      var x = perspectivPe[0]
      var y = perspectivPe[1]
+         //  console.log(x, y, 'perspactive');
          //  if (drawPointsMode) {
          //      return [
          //          x,
@@ -207,11 +220,10 @@
  }
 
  function drawPoint(point, color) {
-
      var proP = project(point)
+     console.log(proP, 'project');
      var x = proP[0];
      var y = proP[1];
-     //  console.log(x, y);
      ctx.beginPath()
      ctx.arc(x, y, 1, 0, 2 * Math.PI, true);
      ctx.strokeStyle = color;
