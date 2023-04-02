@@ -39,6 +39,10 @@
  var C = document.getElementById('canvas') // as HTMLCanvasElement;
  var canvasOffsetX = C.offsetLeft;
  var canvasOffsetY = C.offsetTop;
+ let drawDottedConstrcuter = `press z to increas the depth
+ press x to decreas the depth
+ `
+ let constructure = document.getElementById('constrcture');
  C.addEventListener('mousedown', (e) => {
      if (drawPointsMode) {
          points.push([pushXClient(e), pushYClient(e), drawedZ, drawedColor])
@@ -110,6 +114,7 @@
  }
 
  function drawDots() {
+     constructure.innerText = drawDottedConstrcuter;
      drawPointsMode = !drawPointsMode
  }
 

@@ -10,6 +10,11 @@
     width: 200px;
 }
 
+#constrcture {
+    background-color: aliceblue;
+    height: 300px;
+}
+
 .button-active {
     background-image: linear-gradient(white, rgb(37, 37, 37));
 }
