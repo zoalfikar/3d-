@@ -135,12 +135,12 @@
 
  function pushXClient(e) {
      var x = e.clientX - canvasOffsetX + W / 2;
-     return (((x / W) * (m_max_x - m_min_x)) + m_min_x);
+     return ((((x) / W) * (m_max_x - m_min_x)) + m_min_x) * (drawedZ + mainDeepth);
  }
 
  function pushYClient(e) {
      var y = e.clientY - canvasOffsetY + H / 2;
-     return ((m_max_y - m_min_y) - (y / H) * (m_max_y - m_min_y) + m_min_y)
+     return ((m_max_y - m_min_y) - ((y) / H) * (m_max_y - m_min_y) + m_min_y) * (drawedZ + mainDeepth)
  }
 
  function DottedInitGeometry(shape) {
