@@ -1,6 +1,11 @@
  //limit
  let optionsButtons = document.querySelectorAll('.options Button');
  let previousShapeButton = null;
+ var colors = [
+     'red', 'green', 'blue', 'white',
+     'orange', 'purple', 'cyan', 'yellow'
+ ];
+
  optionsButtons.forEach((button) => {
      button.addEventListener('click', (e) => {
          if (e.target.classList.contains('shape-button')) {
@@ -10,6 +15,10 @@
              previousShapeButton = e.target
          }
          e.target.classList.toggle('button-active')
+         if (e.target.classList.contains('dotted')) {
+
+             solidMode = false
+         }
      })
  })
  var H = 600,
@@ -22,6 +31,8 @@
      m_max_z = 1;
  var stepD = 0.01 * (10) * 1.95 + 0.05;
  var dottedshape = '';
+ var solidMode = false;
+
  var rotatex = false,
      rotatey = false,
      rotatez = false;
@@ -30,7 +41,7 @@
      rotatezspeed = 50 * 0.01;
  var cameray = 0,
      camerax = 0;
- var mainDeepth = 1;
+ var mainDeepth = 4;
  var drawPointsMode = false;
  var drawedZ = 0;
  var dxDrawedZ = 0.1;
@@ -42,7 +53,9 @@
  let drawDottedConstrcuter = `press z to increas the depth
  press x to decreas the depth
  `
+ let drawSolidConstrcuter = `in progress`
  let constructure = document.getElementById('constrcture');
+
  C.addEventListener('mousedown', (e) => {
      if (drawPointsMode) {
          points.push([pushXClient(e), pushYClient(e), drawedZ, drawedColor])
@@ -152,18 +165,29 @@
      var perspectivPe = persP(point);
      var x = perspectivPe[0]
      var y = perspectivPe[1]
-     return [
-         W * ((x - m_min_x) / (m_max_x - m_min_x)),
-         H * (1 - (y - m_min_y) / (m_max_y - m_min_y)),
-     ];
+     var z = perspectivPe[2]
+     if (!solidMode) {
+         return [
+             W * ((x - m_min_x) / (m_max_x - m_min_x)),
+             H * (1 - (y - m_min_y) / (m_max_y - m_min_y)),
+         ];
+     }
+     return new Vector(
+         W * (x - m_min_x) / (m_max_x - m_min_x),
+         H * (1 - (y - m_min_y) / (m_max_y - m_min_y)), z
+     );
  }
 
  function persP(point) {
      var x = point[0]
      var y = point[1]
      var z = point[2]
+     if (!solidMode) {
 
-     return [(x + camerax) / (z + mainDeepth), (y + cameray) / (z + mainDeepth)]
+         return [((x + camerax)) / (z + mainDeepth), ((y + cameray)) / (z + mainDeepth)]
+             //  return [(x + camerax) * (mainDeepth / (z + mainDeepth)), (y + cameray) * ((mainDeepth) / (z + mainDeepth))]
+     }
+     return new Vector(((x + camerax)) / (z + mainDeepth), ((y + cameray)) / (z + mainDeepth), z)
 
  }
 
@@ -215,16 +239,30 @@
 
  function draw() {
      ctx.clearRect(0, 0, H, W);
-     points.forEach((point) => {
-         var color = point[3];
-         if (rotatex)
-             point = rotatDottedX(rotatexspeed * theta, point)
-         if (rotatey)
-             point = rotatDottedY(rotateyspeed * theta, point)
-         if (rotatez)
-             point = rotatDottedZ(rotatezspeed * theta, point)
-         drawPoint(point, color)
-     })
+     if (!solidMode) {
+         points.forEach((point) => {
+             var color = point[3];
+             if (rotatex)
+                 point = rotatDottedX(rotatexspeed * theta, point)
+             if (rotatey)
+                 point = rotatDottedY(rotateyspeed * theta, point)
+             if (rotatez)
+                 point = rotatDottedZ(rotatezspeed * theta, point)
+             drawPoint(point, color)
+         })
+     } else {
+         squars.forEach((squar, idx) => {
+             squar = squar.map((point) => {
+
+                 point = point.rotatX(rotatexspeed * theta)
+                 point = point.rotatY(rotatexspeed * theta)
+                     //  point = point.rotatZ(0.2 * theta)
+                 return point;
+             })
+             var color = colors[idx];
+             drawSquare(squar, color)
+         })
+     }
 
      theta += dtheta
      requestAnimationFrame(draw)

@@ -10,16 +10,15 @@
 
 <body>
     <div class="options">
-        <button class="shape-button" onclick="dottedshape ='cube'; DottedInitGeometry(dottedshape)">Dotted cube</button>
-        <button class="shape-button" onclick="dottedshape ='globe'; DottedInitGeometry(dottedshape)">Dotted globe</button>
-        <button class="shape-button" onclick="drawDots()">draw 3d dotted shape</button>
+        <button class="shape-button dotted" onclick="dottedshape ='cube'; DottedInitGeometry(dottedshape)">Dotted cube</button>
+        <button class="shape-button dotted" onclick="dottedshape ='globe'; DottedInitGeometry(dottedshape)">Dotted globe</button>
+        <button class="shape-button dotted" onclick="drawDots()">draw 3d dotted shape</button>
+        <button class="shape-button solid" onclick="drawSolidCube()">draw solid cube</button>
         <button onclick="rotatex=!rotatex">rotate X</button>
         <button onclick="rotatey=!rotatey">rotate Y</button>
         <button onclick="rotatez=!rotatez">rotate Z</button>
         <div id="constrcture">
-
         </div>
-
     </div>
     <div class="tools">
         <label for="rotatexspeed"> x rotaion speed</label> <input type="range" id="rotatexspeed" onchange="rotatexspeed = 0.01* this.value;">
@@ -60,7 +59,7 @@
         var yp = b * Math.sin(radis)
         var newD = a * Math.cos(radis);
         var newE = c * Math.cos(radis);
-        for (let radis2 = 0; radis2 <= 2 * Math.PI; radis2 += stepD) {
+        for (let radis2 = 0; radis2 <= Math.PI; radis2 += stepD) {
             var xp = newD * Math.cos(radis2)
             var zp = newE * Math.sin(radis2)
             if (((radis2 >= Math.PI /2 -0.15) && (radis2 <= Math.PI /2 +0.1 ))) {
@@ -83,7 +82,7 @@
     <canvas id="canvas" width="600" height="600"></canvas>
     <script src="JS.JS"></script>
     <script src="vector.js"></script>
-    <!-- <script src="JS2.JS"></script> -->
+    <script src="JS2.JS"></script>
 </body>
 
 </html>
