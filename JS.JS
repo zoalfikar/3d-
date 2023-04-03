@@ -53,7 +53,9 @@
  let drawDottedConstrcuter = `press z to increas the depth
  press x to decreas the depth
  `
- let drawSolidConstrcuter = `in progress`
+ let drawSolidConstrcuter = `in progress 
+ refresh page and try again
+ `
  let constructure = document.getElementById('constrcture');
 
  C.addEventListener('mousedown', (e) => {
